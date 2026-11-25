@@ -8,12 +8,12 @@ Use this as a **Whole grid** constraint. It needs no cell groups and no input va
 
 ## Example
 
-- https://tinyurl.com/232nppw7
+- https://tinyurl.com/4xpfybvr
 
 ## Limitations and interactions
 
-The rule applies to consecutive triples in rows and columns only. It does not check diagonals or other directions. It works alongside the puzzle's other constraints, so each digit must satisfy this rule and any other rule affecting its cell.
+The rule applies to consecutive triples in rows and columns (diagonals are commented out; uncomment to enable them).
 
 ## Implementation notes
 
-The JavaScript implementation is in `constraint.js`. It uses `constraint.walk` because it checks a sequence and needs to remember the current parity and the length of its matching run. The run length only needs to be tracked up to two: a third matching digit ends that path. The script builds one walk for each row and column that is at least three cells long.
+Code adds one `DiverseGroup` of evens and odds on each triple.
