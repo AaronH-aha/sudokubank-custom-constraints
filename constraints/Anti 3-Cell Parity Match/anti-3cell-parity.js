@@ -3,26 +3,17 @@
 // SudokuBank use: This is a whole-grid constraint with no input values.
 // Visual: Recommend a global constraint reminder
 
-const lines = [...helpers.grid.rows(), ...helpers.grid.columns()];
+let {0:evens, 1:odds} = Object.groupBy(helpers.grid.digits, digit => digit % 2);
 
-for (const line of lines) {
-  // Shorter lines cannot contain a run of three matching parities.
-  if (line.length < 3) continue;
+let lines = [
+  ...helpers.grid.rows(),
+  ...helpers.grid.columns(),
+  // ...helpers.grid.runs([1, 1]), // negative diagonal
+  // ...helpers.grid.runs([1, -1]), // positive diagonal
+];
 
-  constraint.walk("no parity run of three", line, {
-    // Track the previous digit's parity and the current run length.
-    start: [],
-    step: (state, digit) => {
-      const parity = digit % 2;
-      // A parity change starts a new run.
-      if (state.length === 0 || state[0] !== parity) return [parity, 1];
+let windows = lines.flatMap(line => helpers.cells.windows(line, 3));
 
-      // Stop this path if the new digit would make a run of three.
-      // Otherwise, keep the run length capped at two.
-      return state[1] === 2 ? null : [parity, 2];
-    },
-    
-    // Any path that reaches the end has avoided a run of three.
-    accept: () => true,
-  });
-}
+windows.forEach(window =>
+  constraint.add(new DiverseGroups(window, [evens, odds]))
+);
